@@ -1,49 +1,107 @@
+body {
+    overflow: scroll;
+}
 
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  overflow-y: scroll; 
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    padding: 20px 10px;
+    color:rgb(46, 175, 132);
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+}
+
+.sub-header {
+    display: flex;
+    align-items: center;
+    justify-content:space-around;
+    margin: 30px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    min-width: 160px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    background-color: rgb(209, 209, 209);
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: rgb(46, 175, 132);
+}
+
+.dropbtn {
+    background-color: palevioletred;
+    padding: 10px;
+    width: 170%;
+    border: 1px solid white;
+    border-radius: 8px;
+    color: white;
+}
+
+.edit-delete {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30%;
+}
+
+.edit {
+    margin-right: 10px;
+}
+
+.bt {
+    padding: 16px;
+    border: 1px solid rgb(46, 175, 132);
+    background-color: rgb(46, 175, 132);
+    color: white;
+    border-radius: 8px;
+    width: 200px;
+}
+
+.filter {
+    display: flex;
+    align-items: center;
+    margin-right: 200px;
+}
+.filter h4 {
+    margin: 0;
+    margin-right: 10px;
 }
 
 .card-body {
-  text-align: center;
+    background-color: rgb(155, 222, 199);
+    border: 1px solid rgb(46, 175, 132);
 }
 
-.card {
-  margin: 30px auto;
+.statusdd {
+    background-color: palevioletred;
+    border: 1px solid palevioletred;
+    color: white;
+    margin: 20px;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 .main {
-  margin: 10%;
-  margin-top: 70px;
-  margin-bottom: 70px;
-}
-
-.property {
-  position: relative;
-  
-}
-
-.property .sale-label {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgb(33, 33, 33);
-  color: white;
-  padding: 0px 10px;
-  border-radius: 5px;
-}
-
-.checked {
-color: orange;
-}
-
-.count-circle {
-  height: 25px;
-  width: 25px;
-  border-radius: 50%;
-  background-color: black;
-  color: white;
+    margin-top: 8%;
 }

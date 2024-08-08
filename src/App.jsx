@@ -1,46 +1,74 @@
-import { useState } from 'react';
-import './App.css';
-import Navigation from './Component/Navigation';
+import React, { useState } from 'react';
 import Header from './Component/Header';
+import Body from './Component/Body';
 import Cart from './Component/Cart';
-import Footer from './Component/Footer';
 
 const App = () => {
-  const items = [
-    { name: "Fancy Product", price: "$40.00 - $80.00", sale: false },
-    { name: "Special Item", price: "$18.00", sale: true, originalPrice: "$40.00" },
-    { name: "Sale Item", price: "$25.00", sale: true, originalPrice: "$50.00" },
-    { name: "Popular Item", price: "$40.00", sale: false },
-    { name: "Sale Item", price: "$50.00", sale: true, originalPrice: "$25.00" },
-    { name: "Fancy Product", price: "$120.00 - $280.00", sale: false },
-    { name: "Special Item", price: "$20.00", sale: true, originalPrice: "$18.00" },
-    { name: "Popular Item", price: "$40.00", sale: false }
-  ];
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [todos, setTodos] = useState([]);
+  const [editIndex, setEditIndex] = useState(null);
+  const [filter, setFilter] = useState('all'); 
 
-  const [addedItems, setAddedItems] = useState(Array(items.length).fill(false));
-  const [count, setCount] = useState(0);
-
-  const handleCart = (index) => {
-    const updatedItems = [...addedItems];
-    if (updatedItems[index]) {
-      setCount(count - 1);
+  const addOrEditTodo = () => {
+    if (editIndex !== null) {
+      const updatedTodos = todos.map((todo, index) =>
+        index === editIndex ? { ...todo, name, description } : todo
+      );
+      setTodos(updatedTodos);
+      setEditIndex(null); 
     } else {
-      setCount(count + 1);
+      setTodos([...todos, { name, description, status: 'not_completed' }]);
     }
-    updatedItems[index] = !updatedItems[index];
-    setAddedItems(updatedItems);
+    setName('');
+    setDescription('');
   };
+
+  const deleteTodo = (index) => {
+    const newTodos = [...todos];
+    newTodos.splice(index, 1);
+    setTodos(newTodos);
+  };
+
+  const startEditing = (index) => {
+    setEditIndex(index);
+    setName(todos[index].name);
+    setDescription(todos[index].description);
+  };
+
+  const updateStatus = (index, status) => {
+    const updatedTodos = [...todos];
+    updatedTodos[index].status = status;
+    setTodos(updatedTodos);
+  };
+  
+
+  const filteredTodos = todos.filter(todo => {
+    if (filter === 'completed') {
+      return todo.status === 'completed';
+    } else if (filter === 'not_completed') {
+      return todo.status === 'not_completed';
+    }
+    return true; 
+  });
 
   return (
     <div>
-      <Navigation count={count} />
-      <Header />
-      <Cart 
-        items={items}
-        addedItems={addedItems} 
-        handleCart={handleCart} 
+      <Header 
+        name={name}
+        setName={setName}
+        description={description}
+        setDescription={setDescription}
+        addOrEditTodo={addOrEditTodo}
+        isEditing={editIndex !== null}
       />
-      <Footer />
+      <Body setFilter={setFilter} />
+      <Cart 
+        todos={filteredTodos}
+        deleteTodo={deleteTodo}
+        startEditing={startEditing}
+        updateStatus={updateStatus}
+      />
     </div>
   );
 }
