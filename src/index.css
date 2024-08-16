@@ -1,0 +1,77 @@
+body {
+  display: flex;
+  justify-content: center;
+}
+  
+  .app {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  
+  .form {
+    margin-bottom: 20px;
+  }
+  
+  .form h2 {
+    margin-bottom: 10px;
+  }
+  
+  .form input {
+    width: calc(100% - 20px);
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccccccf0;
+    border-radius: 4px;
+  }
+  
+  .form button {
+    padding: 10px 15px;
+    margin-right: 10px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .form button:hover {
+    background-color: #0056b3;
+  }
+  
+  .user-list table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .user-list th,
+  .user-list td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+  }
+  
+  .user-list th {
+    background-color: #f7f7f7;
+  }
+  
+  .user-list button {
+    padding: 5px 10px;
+    margin: 5px;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .user-list button:nth-child(2) {
+    background-color: #dc3545;
+  }
+  

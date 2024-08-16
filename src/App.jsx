@@ -1,98 +1,184 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const App = () => {
+const apiURL = 'https://jsonplaceholder.typicode.com/users';
 
-  const [userData, setUserData] = useState({
+function App() {
+  const [users, setUsers] = useState([]);
+  const [localUsers, setLocalUsers] = useState([]); 
+  const [newUser, setNewUser] = useState({ 
     name: '',
-    username: '',
     email: '',
-    street: '',
-    suite: '',
-    city: '',
-    zipcode: '',
-    lat: '',
-    lng: '',
+    address: {
+      street: '',
+      suite: '',
+      city: '',
+      zipcode: '',
+    },
     phone: '',
-    website: '',
-    companyName: '',
-    catchPhrase: '',
-    bs: ''
+    company: {
+      name: '',
+    },
   });
 
-  const fetchTodo = async () => {
-    const res = await axios.get('https://jsonplaceholder.typicode.com/users');
-    const data = res.data[0];
-    setUserData({
-      name: data?.name || '',
-      username: data?.username || '',
-      email: data?.email || '',
-      street: data?.address.street || '',
-      suite: data?.address.suite || '',
-      city: data?.address.city || '',
-      zipcode: data?.address.zipcode || '',
-      lat: data?.address.geo.lat || '',
-      lng: data?.address.geo.lng || '',
-      phone: data?.phone || '',
-      website: data?.website || '',
-      companyName: data?.company.name || '',
-      catchPhrase: data?.company.catchPhrase || '',
-      bs: data?.company.bs || ''
-    });
-  }
-
-  const handleChange = (e) => {
-    console.log(`Changing ${e.target.name} to ${e.target.value}`);
-    setUserData({
-      ...userData,
-      [e.target.name]: e.target.value
-    });
-  }
+  const [editingUser, setEditingUser] = useState(null);
 
   useEffect(() => {
-    fetchTodo();
+    fetchUsers();
   }, []);
 
+  const fetchUsers = async () => {
+    const response = await axios.get(apiURL);
+    setUsers(response.data);
+  };
+
+  const addUser = async () => {
+    if (newUser.name && newUser.email) {
+      const response = await axios.post(apiURL, newUser);
+      const createdUser = { ...response.data, id: users.length + localUsers.length + 1 };
+      setLocalUsers([...localUsers, createdUser]); 
+      setNewUser({ 
+        name: '', 
+        email: '', 
+        address: {
+          street: '',
+          suite: '',
+          city: '',
+          zipcode: '',
+        }, 
+        phone: '',
+        company: {
+          name: '',
+        }
+      });
+    }
+  };
+
+  const deleteUser = async (id) => {
+    if (id <= users.length) {
+      await axios.delete(`${apiURL}/${id}`);
+      setUsers(users.filter(user => user.id !== id));
+    } else {
+      setLocalUsers(localUsers.filter(user => user.id !== id));
+    }
+  };
+
+  const startEditingUser = (user) => {
+    setEditingUser(user);
+  };
+
+  const cancelEditing = () => {
+    setEditingUser(null);
+  };
+
+  const editUser = async () => {
+    if (editingUser.name && editingUser.email) {
+      if (editingUser.id <= users.length) {
+        const response = await axios.put(`${apiURL}/${editingUser.id}`, editingUser);
+        setUsers(users.map(user => (user.id === editingUser.id ? response.data : user)));
+      } else {
+        setLocalUsers(localUsers.map(user => (user.id === editingUser.id ? editingUser : user)));
+      }
+      setEditingUser(null);
+    }
+  };
+
   return (
-    <div>
-      <form>
-        <div>
-          <input type='text' name='name' placeholder='Name' value={userData.name} onChange={handleChange} />
-        </div>
-        <div>
-          <input type='text' name='username' placeholder='Username' value={userData.username} onChange={handleChange} />
-        </div>
-        <div>
-          <input type='text' name='email' placeholder='Email' value={userData.email} onChange={handleChange} />
-        </div>
-        Address
-        <div>
-          <input type='text' name='street' placeholder='Street' value={userData.street} onChange={handleChange} />
-          <input type='text' name='suite' placeholder='Suite' value={userData.suite} onChange={handleChange} />
-          <input type='text' name='city' placeholder='City' value={userData.city} onChange={handleChange} />
-          <input type='text' name='zipcode' placeholder='Zipcode' value={userData.zipcode} onChange={handleChange} />
-        </div>
-        Geo
-        <div>
-          <input type='text' name='lat' placeholder='Latitude' value={userData.lat} onChange={handleChange} />
-          <input type='text' name='lng' placeholder='Longitude' value={userData.lng} onChange={handleChange} />
-        </div>
-        <div>
-          <input type='text' name='phone' placeholder='Phone' value={userData.phone} onChange={handleChange} />
-        </div>
-        <div>
-          <input type='text' name='website' placeholder='Website' value={userData.website} onChange={handleChange} />
-        </div>
-        Company
-        <div>
-          <input type='text' name='companyName' placeholder='Company Name' value={userData.companyName} onChange={handleChange} />
-          <input type='text' name='catchPhrase' placeholder='Catch Phrase' value={userData.catchPhrase} onChange={handleChange} />
-          <input type='text' name='bs' placeholder='BS' value={userData.bs} onChange={handleChange} />
-        </div>
-        <button type='submit'>Submit</button>
-      </form>
+    <div className="app">
+      <h1>User Management</h1>
+
+      <div className="form">
+        <h2>{editingUser ? 'Edit User' : 'Add New User'}</h2>
+        <input
+          type="text"
+          placeholder="Name"
+          value={editingUser ? editingUser.name : newUser.name}
+          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, name: e.target.value }) : setNewUser({ ...newUser, name: e.target.value })}
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={editingUser ? editingUser.email : newUser.email}
+          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, email: e.target.value }) : setNewUser({ ...newUser, email: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="Street"
+          value={editingUser ? editingUser.address.street : newUser.address.street}
+          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, address: { ...editingUser.address, street: e.target.value } }) : setNewUser({ ...newUser, address: { ...newUser.address, street: e.target.value } })}
+        />
+        <input
+          type="text"
+          placeholder="Suite"
+          value={editingUser ? editingUser.address.suite : newUser.address.suite}
+          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, address: { ...editingUser.address, suite: e.target.value } }) : setNewUser({ ...newUser, address: { ...newUser.address, suite: e.target.value } })}
+        />
+        <input
+          type="text"
+          placeholder="City"
+          value={editingUser ? editingUser.address.city : newUser.address.city}
+          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, address: { ...editingUser.address, city: e.target.value } }) : setNewUser({ ...newUser, address: { ...newUser.address, city: e.target.value } })}
+        />
+        <input
+          type="text"
+          placeholder="Zipcode"
+          value={editingUser ? editingUser.address.zipcode : newUser.address.zipcode}
+          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, address: { ...editingUser.address, zipcode: e.target.value } }) : setNewUser({ ...newUser, address: { ...newUser.address, zipcode: e.target.value } })}
+        />
+        <input
+          type="text"
+          placeholder="Phone"
+          value={editingUser ? editingUser.phone : newUser.phone}
+          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, phone: e.target.value }) : setNewUser({ ...newUser, phone: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="Company Name"
+          value={editingUser ? editingUser.company.name : newUser.company.name}
+          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, company: { ...editingUser.company, name: e.target.value } }) : setNewUser({ ...newUser, company: { ...newUser.company, name: e.target.value } })}
+        />
+        {editingUser ? (
+          <>
+            <button onClick={editUser}>Update</button>
+            <button onClick={cancelEditing}>Cancel</button>
+          </>
+        ) : (
+          <button onClick={addUser}>Add User</button>
+        )}
+      </div>
+
+      <div className="user-list">
+        <h2>User List</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Address</th>
+              <th>Phone</th>
+              <th>Company</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...users, ...localUsers].map(user => (
+              <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.address.street},{user.address.suite},{user.address.city},{user.address.zipcode}</td>
+                <td>{user.phone}</td>
+                <td>{user.company.name}</td>
+                <td>
+                  <button onClick={() => startEditingUser(user)}>Edit</button>
+                  <button onClick={() => deleteUser(user.id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
