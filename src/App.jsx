@@ -1,176 +1,184 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useFormik } from 'formik';
 import axios from 'axios';
 
-const apiURL = 'https://jsonplaceholder.typicode.com/users';
+const apiURL = 'https://66c060e0ba6f27ca9a56715e.mockapi.io/users';
 
 function App() {
-  const [users, setUsers] = useState([]);
-  const [localUsers, setLocalUsers] = useState([]); 
-  const [newUser, setNewUser] = useState({ 
-    name: '',
-    email: '',
-    address: {
-      street: '',
-      suite: '',
-      city: '',
-      zipcode: '',
+  const [bookList, setBookList] = useState([]);
+  const [editingBook, setEditingBook] = useState(null);
+
+  const formik = useFormik({
+    initialValues: {
+      title: '',
+      author: {
+        name: '',
+        birthdate: '',
+        bio: '',
+      },
+      isbnNo: '',
+      publicationDate: '',
     },
-    phone: '',
-    company: {
-      name: '',
+    onSubmit: async (values, { resetForm }) => {
+      if (editingBook) {
+        await updateUser(editingBook.id, values); // Update existing book
+      } else {
+        await addUser(values); // Add new book
+      }
+      resetForm();
+      setEditingBook(null);
     },
   });
 
-  const [editingUser, setEditingUser] = useState(null);
-
   useEffect(() => {
-    fetchUsers();
+    fetchBooks();
   }, []);
 
-  const fetchUsers = async () => {
-    const response = await axios.get(apiURL);
-    setUsers(response.data);
+  const fetchBooks = async () => {
+    try {
+      const response = await axios.get(apiURL);
+      setBookList(response.data);
+    } catch (error) {
+      console.error('Error fetching book data:', error);
+    }
   };
 
-  const addUser = async () => {
-    if (newUser.name && newUser.email) {
-      const response = await axios.post(apiURL, newUser);
-      const createdUser = { ...response.data, id: users.length + localUsers.length + 1 };
-      setLocalUsers([...localUsers, createdUser]); 
-      setNewUser({ 
-        name: '', 
-        email: '', 
-        address: {
-          street: '',
-          suite: '',
-          city: '',
-          zipcode: '',
-        }, 
-        phone: '',
-        company: {
-          name: '',
-        }
-      });
+  const addUser = async (newBook) => {
+    try {
+      const response = await axios.post(apiURL, newBook);
+      setBookList((prevList) => [...prevList, response.data]);
+    } catch (error) {
+      console.error('Error adding new book:', error);
     }
+  };
+
+  const updateUser = async (id, updatedBook) => {
+    try {
+      const response = await axios.put(`${apiURL}/${id}`, updatedBook);
+      setBookList((prevList) =>
+        prevList.map((book) => (book.id === id ? response.data : book))
+      );
+    } catch (error) {
+      console.error('Error updating book:', error);
+    }
+  };
+
+  const startEditingBook = (book) => {
+    setEditingBook(book);
+    formik.setValues(book);
   };
 
   const deleteUser = async (id) => {
-    if (id <= users.length) {
+    try {
       await axios.delete(`${apiURL}/${id}`);
-      setUsers(users.filter(user => user.id !== id));
-    } else {
-      setLocalUsers(localUsers.filter(user => user.id !== id));
-    }
-  };
-
-  const startEditingUser = (user) => {
-    setEditingUser(user);
-  };
-
-  const cancelEditing = () => {
-    setEditingUser(null);
-  };
-
-  const editUser = async () => {
-    if (editingUser.name && editingUser.email) {
-      if (editingUser.id <= users.length) {
-        const response = await axios.put(`${apiURL}/${editingUser.id}`, editingUser);
-        setUsers(users.map(user => (user.id === editingUser.id ? response.data : user)));
-      } else {
-        setLocalUsers(localUsers.map(user => (user.id === editingUser.id ? editingUser : user)));
-      }
-      setEditingUser(null);
+      setBookList((prevList) => prevList.filter((book) => book.id !== id));
+    } catch (error) {
+      console.error('Error deleting book:', error);
     }
   };
 
   return (
-    <div className="app">
-      <h1>User Management</h1>
+    <div>
+      <h1>Book Library</h1>
 
-      <div className="form">
-        <h2>{editingUser ? 'Edit User' : 'Add New User'}</h2>
-        <input
-          type="text"
-          placeholder="Name"
-          value={editingUser ? editingUser.name : newUser.name}
-          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, name: e.target.value }) : setNewUser({ ...newUser, name: e.target.value })}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={editingUser ? editingUser.email : newUser.email}
-          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, email: e.target.value }) : setNewUser({ ...newUser, email: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Street"
-          value={editingUser ? editingUser.address.street : newUser.address.street}
-          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, address: { ...editingUser.address, street: e.target.value } }) : setNewUser({ ...newUser, address: { ...newUser.address, street: e.target.value } })}
-        />
-        <input
-          type="text"
-          placeholder="Suite"
-          value={editingUser ? editingUser.address.suite : newUser.address.suite}
-          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, address: { ...editingUser.address, suite: e.target.value } }) : setNewUser({ ...newUser, address: { ...newUser.address, suite: e.target.value } })}
-        />
-        <input
-          type="text"
-          placeholder="City"
-          value={editingUser ? editingUser.address.city : newUser.address.city}
-          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, address: { ...editingUser.address, city: e.target.value } }) : setNewUser({ ...newUser, address: { ...newUser.address, city: e.target.value } })}
-        />
-        <input
-          type="text"
-          placeholder="Zipcode"
-          value={editingUser ? editingUser.address.zipcode : newUser.address.zipcode}
-          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, address: { ...editingUser.address, zipcode: e.target.value } }) : setNewUser({ ...newUser, address: { ...newUser.address, zipcode: e.target.value } })}
-        />
-        <input
-          type="text"
-          placeholder="Phone"
-          value={editingUser ? editingUser.phone : newUser.phone}
-          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, phone: e.target.value }) : setNewUser({ ...newUser, phone: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Company Name"
-          value={editingUser ? editingUser.company.name : newUser.company.name}
-          onChange={(e) => editingUser ? setEditingUser({ ...editingUser, company: { ...editingUser.company, name: e.target.value } }) : setNewUser({ ...newUser, company: { ...newUser.company, name: e.target.value } })}
-        />
-        {editingUser ? (
-          <>
-            <button onClick={editUser}>Update</button>
-            <button onClick={cancelEditing}>Cancel</button>
-          </>
-        ) : (
-          <button onClick={addUser}>Add User</button>
-        )}
-      </div>
+      <form onSubmit={formik.handleSubmit}>
+        <label>
+          Title:
+          <input
+            type="text"
+            placeholder="Title"
+            name="title"
+            value={formik.values.title}
+            onChange={formik.handleChange}
+          />
+        </label>
 
-      <div className="user-list">
-        <h2>User List</h2>
+        <label>
+          Author Name:
+          <input
+            type="text"
+            placeholder="Author Name"
+            name="author.name"
+            value={formik.values.author.name}
+            onChange={formik.handleChange}
+          />
+        </label>
+
+        <label>
+          Author Birthdate:
+          <input
+            type="text"
+            placeholder="Author Birthdate"
+            name="author.birthdate"
+            value={formik.values.author.birthdate}
+            onChange={formik.handleChange}
+          />
+        </label>
+
+        <label>
+          Author Bio:
+          <input
+            type="text"
+            placeholder="Author Bio"
+            name="author.bio"
+            value={formik.values.author.bio}
+            onChange={formik.handleChange}
+          />
+        </label>
+
+        <label>
+          ISBN Number:
+          <input
+            type="text"
+            placeholder="ISBN No"
+            name="isbnNo"
+            value={formik.values.isbnNo}
+            onChange={formik.handleChange}
+          />
+        </label>
+
+        <label>
+          Publication Date:
+          <input
+            type="text"
+            placeholder="Publication Date"
+            name="publicationDate"
+            value={formik.values.publicationDate}
+            onChange={formik.handleChange}
+          />
+        </label>
+
+        <button type="submit">
+          {editingBook ? 'Update Book' : 'Add Book'}
+        </button>
+      </form>
+
+      <div>
+        <h2>Book List</h2>
         <table>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Address</th>
-              <th>Phone</th>
-              <th>Company</th>
+              <th>Title</th>
+              <th>Author Name</th>
+              <th>Author Birthdate</th>
+              <th>Author Bio</th>
+              <th>ISBN Number</th>
+              <th>Publication Date</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {[...users, ...localUsers].map(user => (
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.address.street},{user.address.suite},{user.address.city},{user.address.zipcode}</td>
-                <td>{user.phone}</td>
-                <td>{user.company.name}</td>
+            {bookList.map((book) => (
+              <tr key={book.id}>
+                <td>{book.title}</td>
+                <td>{book.author.name}</td>
+                <td>{book.author.birthdate}</td>
+                <td>{book.author.bio}</td>
+                <td>{book.isbnNo}</td>
+                <td>{book.publicationDate}</td>
                 <td>
-                  <button onClick={() => startEditingUser(user)}>Edit</button>
-                  <button onClick={() => deleteUser(user.id)}>Delete</button>
+                  <button onClick={() => startEditingBook(book)}>Edit</button>
+                  <button onClick={() => deleteUser(book.id)}>Delete</button>
                 </td>
               </tr>
             ))}
