@@ -11,6 +11,10 @@ function Cart({ products }) {
     return cart.some((item) => item.id === productId);
   };
 
+  const handleImageError = (event) => {
+    event.target.src = 'https://via.placeholder.com/150'; 
+  };
+
   return (
     <div>
       <div className="main">
@@ -19,13 +23,13 @@ function Cart({ products }) {
             <div className="col-md-3" key={index}>
               <div className="card" style={{ width: '18rem' }}>
                 <div className="property">
-                  <img className="cardimgtop" src={product.images} alt="..." />
+                  <img className="cardimgtop" src={product.images} alt={product.title} onError={handleImageError}/>
                 </div>
                 <div className="card-body">
                   <h5 style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                     <b>{product.title}</b>
                   </h5>
-                  <Rating />
+                  <Rating rating={product.rating}/>
                   <p className="card-price">
                     ${product.price}
                   </p>

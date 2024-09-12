@@ -23,13 +23,7 @@ const App = () => {
       "brand": "Apple",
       "category": "smartphones",
       "thumbnail": "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
-      "images": [
-        "https://i.dummyjson.com/data/products/1/1.jpg",
-        "https://i.dummyjson.com/data/products/1/2.jpg",
-        "https://i.dummyjson.com/data/products/1/3.jpg",
-        "https://i.dummyjson.com/data/products/1/4.jpg",
-        "https://i.dummyjson.com/data/products/1/thumbnail.jpg"
-      ]
+      "images": "https://via.placeholder.com/200x250?text=iPhone+9"
     },
     {
       "id": 2,
@@ -42,12 +36,7 @@ const App = () => {
       "brand": "Apple",
       "category": "smartphones",
       "thumbnail": "https://i.dummyjson.com/data/products/2/thumbnail.jpg",
-      "images": [
-        "https://i.dummyjson.com/data/products/2/1.jpg",
-        "https://i.dummyjson.com/data/products/2/2.jpg",
-        "https://i.dummyjson.com/data/products/2/3.jpg",
-        "https://i.dummyjson.com/data/products/2/thumbnail.jpg"
-      ]
+      "images": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-x.jpg"
     },
     {
       "id": 3,
@@ -60,9 +49,7 @@ const App = () => {
       "brand": "Samsung",
       "category": "smartphones",
       "thumbnail": "https://i.dummyjson.com/data/products/3/thumbnail.jpg",
-      "images": [
-        "https://i.dummyjson.com/data/products/3/1.jpg"
-      ]
+      "images": "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s9-.jpg"
     },
     {
       "id": 4,
@@ -75,13 +62,7 @@ const App = () => {
       "brand": "OPPO",
       "category": "smartphones",
       "thumbnail": "https://i.dummyjson.com/data/products/4/thumbnail.jpg",
-      "images": [
-        "https://i.dummyjson.com/data/products/4/1.jpg",
-        "https://i.dummyjson.com/data/products/4/2.jpg",
-        "https://i.dummyjson.com/data/products/4/3.jpg",
-        "https://i.dummyjson.com/data/products/4/4.jpg",
-        "https://i.dummyjson.com/data/products/4/thumbnail.jpg"
-      ]
+      "images": "https://fdn2.gsmarena.com/vv/bigpic/oppo-f19.jpg"
     },
     {
       "id": 5,
@@ -94,11 +75,7 @@ const App = () => {
       "brand": "Huawei",
       "category": "smartphones",
       "thumbnail": "https://i.dummyjson.com/data/products/5/thumbnail.jpg",
-      "images": [
-        "https://i.dummyjson.com/data/products/5/1.jpg",
-        "https://i.dummyjson.com/data/products/5/2.jpg",
-        "https://i.dummyjson.com/data/products/5/3.jpg"
-      ]
+      "images": "https://fdn2.gsmarena.com/vv/bigpic/huawei-p30.jpg"
     }
   ];
 

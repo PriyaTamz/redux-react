@@ -1,14 +1,18 @@
 import React from 'react';
 
-function Rating() {
+function Rating({ rating }) {
+
+    const filledStars = Math.round(rating);
+    const totalStars = 5;
 
     return (
         <div>
-            <span className="fa fa-star checked"></span>
-            <span className="fa fa-star checked"></span>
-            <span className="fa fa-star checked"></span>
-            <span className="fa fa-star checked"></span>
-            <span className="fa fa-star checked"></span>
+            {[...Array(totalStars)].map((_, index) => (
+                <span
+                    key={index}
+                    className={`fa fa-star ${index < filledStars ? 'checked' : ''}`}
+                ></span>
+            ))}
         </div>
     )
 
